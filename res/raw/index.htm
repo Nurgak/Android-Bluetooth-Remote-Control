@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAJFJREFUOE+dUkEOwCAI8w/7w97hz+Yj9l8mnSQMFYckJB7aWigpeUVE6a69VZXMBYFzR4SJQj4uKqU4TmZW+edKzjmjWQRCH7xjlcFMlBXg3eEdq1YAvxv8K76wKtZlFMFPwxlZ1aMsUx1Z/ZXCzGooBW11KwU9XziFbjntYMIpQMgcTCgFCAwPZhmgAbQD82gPnUst+Oh118cAAAAASUVORK5CYII=" />
+<title>Wi-Fi Control</title>
+<script type="text/javascript">
+
+var page;
+
+// Set up AJAX
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function()
+{
+	if(page != "console")
+	{
+		return;
+	}
+	
+	if(xmlhttp.readyState == 4 && xmlhttp.responseText != "")
+	{
+		var dataContent = document.getElementById("data-content");
+		// Add returned data to the top of the log
+		dataContent.innerHTML += xmlhttp.responseText
+		// Scroll to bottom
+		dataContent.scrollTop = dataContent.scrollHeight;
+	}
+}
+
+// Poll to keep the log up to date
+function poll()
+{
+	xmlhttp.open("POST", document.location + "?t", true);
+	xmlhttp.send(null);
+}
+window.setInterval(poll, 1000);
+
+document.onkeydown = function(event)
+{
+	if(page != "control")
+	{
+		return;
+	}
+	
+	var command = "";
+	var speed = document.getElementById("speed").value;
+	switch(event.keyCode)
+	{
+	case 32:
+		// Space bar
+		command = "s,0,0";
+		break;
+	case 37:
+	case 65:
+		// a or left
+		command = "s,"+(-speed)+","+speed;
+		break;
+	case 38:
+	case 87:
+		// w or up
+		command = "s,"+speed+","+speed;
+		break;
+	case 39:
+	case 68:
+		// d or right
+		command = "s,"+speed+","+(-speed);
+		break;
+	case 40:
+	case 83:
+		// s or down
+		command = "s,"+(-speed)+","+(-speed);
+		break;
+	}
+	sendAjaxMessage(command)
+}
+
+function sendMessageToDevice()
+{
+	if(page != "console")
+	{
+		return;
+	}
+	
+	var msg = document.getElementById("cmd");
+	if(msg.value != "")
+	{
+		// Send the custom command to Android
+		sendAjaxMessage(msg.value);
+		msg.value = "";
+	}
+	return false;
+}
+
+function sendAjaxMessage(message)
+{
+	if(message != "")
+	{
+		// Perform the AJAX request
+		xmlhttp.open("POST", document.location + "?cmd=" + message, true);
+		xmlhttp.send(null);
+	}
+}
+
+function switchPage(switchToPage)
+{
+	var pages = ["console", "control"];
+	// Hide all pages
+	for(i in pages)
+	{
+		document.getElementById(pages[i]).style.display = "none";
+	}
+	page = switchToPage;
+	// Show the new page
+	document.getElementById(page).style.display = "block";
+	return false;
+}
+
+</script>
+<style>
+
+html
+{
+	min-height: 100%;
+	background-color: #272d33;
+	background: -webkit-linear-gradient(top, #000000, #272d33);
+	background: linear-gradient(top, #000000, #272d33);
+	background: -moz-linear-gradient(top, #000000, #272d33);
+	background: -ms-linear-gradient(top, #000000, #272d33);
+	background: -o-linear-gradient(top, #000000, #272d33);
+	color: #ffffff;
+	font-family: helvetica;
+	font-weight: 500;
+}
+
+body
+{
+	margin: 0;
+	padding: 0;
+	scrollbar-face-color: #454546;
+	scrollbar-shadow-color: #454546;
+	scrollbar-highlight-color:#454546;
+	scrollbar-3dlight-color: #1E1F21;
+	scrollbar-darkshadow-color: #1E1F21;
+	scrollbar-track-color: #000000;
+	scrollbar-arrow-color: #454546;
+}
+
+#actionbar
+{
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAADTklEQVRoQ9WZv2tTURTH7x+ggwgO1iHTy+yUqZBNCB2cVLJlCEoGoeCQzWwSdLQJSCb/gKJuDg4poUuTPQWn4pQlayE0x9z73ovf/DjpOX332tdC4AyX+77n5dvzud8bYwL8HV9d0afLSzqcTOjtCdGrn0TPvv6hAI8Ks6UVby4uyJydOfHm8+JzeHJ3Gtg/P3fizekpRR9Gsfg3P/LdANpmPp/TbDajyZqFDl4T7VeJnj7/nb9m0DZW/HQ6pdFotGIhK95E9nOcvwacbYZDZ5vxeOzEDwaDxEJ9Z6G9/V+x+OhL/hrAaYP1im2eLBp4/I3Mow71ej3qdDrUbrfz0cy/adMH2/Sd55e2seIfvidz/6UT32q1qNFo5KMBnDZYr9jmwTsn3tw7oGaz6cTX63V/DdhJ8tEDgDjb1Go1qlarVKlUCGu0E9ZqPb4AxNnGii+Xy1QsFl0jaY12wtq+TAfExXAQAREnSRYAcbYplUpOfKFQIKzRTliLgBgCQGgDtAp3cME1aj0hANTtdpcTBq3CNYBr0DYiIOLXZAE0XPgtK4DQBtYqURQ523AN4Jp1IF6rRwygve9iAGktZNfbb81CTavH4H831twkQXtwb1RrIZw8Wj0mnjbxWQXrzUnyQgwgrYVwvVbPykvcAFBim5sAaFsiQ6tgze3P6WFjmAZA9h8TrYI1B0QOWBzgOD1sA5xtcEpgLQdQbFFuPbc/p8dbEM4CIAngvAm9DkDWTtuAaGc4N9kkgAvewAaAkiAvAaIEcMEbQGCJAeQS2VE+EhlOnjuZyDYBFN//5C6RcYlJDKDENjcBoiohSgC07Zxjp1A6VWytAaINOMET2S4AbUtYXhNZctfEJkQMzpIrQQmAtMfpdSCmtpHoMdoEhFbxdZzOnsjYK8F4qqAlMIxzDawfp1Ob7Upk6ZrdV5SbeowWQBI6ai2UBYhMIuOvBCUN3EIikwNI0oDWQlmAuDuRJQCSiMY13JWgLyCqE5m2gSUQ147Tt5DI4ptkbQPcFaUvIGr1iNaHAKLowb4WoW3SK8HcJzJsXgsgCRB9vVzRPiGAKHqwr0XaRObrud720f5G5u3BITba/hvZkXoch9Am2lN9JSja9T8u4hJZCAl/AUAnrKmekp8PAAAAAElFTkSuQmCC');
+	background-repeat: no-repeat;
+	background-position: 8px center;
+	width: 900px;
+	margin: 0 auto;
+	padding: 8px 0;
+}
+
+#title
+{
+	padding-left: 64px;
+}
+
+h1
+{
+	font-size: 2em;
+	padding: 0;
+	margin: 0;
+}
+
+a
+{
+	color: #ffffff;
+	text-decoration: none;
+	display: block;
+	padding: 0.6em;
+	outline: none;
+}
+
+ul
+{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+li
+{
+	border-bottom: solid 1px #35373a;
+	margin: 0 0.5em;
+}
+
+img
+{
+	float: left;
+	padding: 8px;
+}
+
+#content
+{
+	width: 900px;
+	margin: 0 auto;
+	border-top: solid 2px #33b5e5;
+	clear: both;
+}
+
+.page
+{
+	padding-left: 200px;
+	width: 700px;
+}
+
+#menu
+{
+	float: left;
+	width: 200px;
+}
+
+#data-wrapper
+{
+	background: #000000;
+	padding: 3px;
+}
+
+#data-content
+{
+	height: 320px;
+	font-family: 'courier new';
+	font-size: 0.8em;
+	overflow: auto;
+}
+
+.text
+{
+	background: transparent;
+	border-width: 0;
+	border-bottom: solid 2px #0099cc;
+	color: #ffffff;
+	padding: 0.3em;
+	margin: 0.5em;
+	font-family: helvetica;
+	outline: none;
+}
+
+.button
+{
+	border: solid 1px;
+	border-color: #86888c #4C4F52 #36383B #4C4F52;
+	background: #54575a;
+	color: #ffffff;
+	font-family: helvetica;
+	padding: 0.3em;
+	margin: 0.5em 0.3em;
+	float: right;
+}
+
+::-webkit-scrollbar
+{
+	width: 6px;
+	height: 6px;
+	padding-right: 3px;
+}
+
+::-webkit-scrollbar-corner
+{
+	background: transparent;
+}
+
+::-webkit-scrollbar-track
+{
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border: solid 1px #1E1F21;
+	background: #454546;
+}
+
+::-webkit-scrollbar-thumb:window-inactive
+{
+	background: transparent;
+}
+
+</style>
+</head>
+<body>
+<div id="actionbar">
+	<div id="title">
+		<h1>Wi-Fi Control</h1>
+		Control your Bluetooth device over Wi-Fi via Android
+	</div>
+</div>
+
+<div id="content">
+
+	<div id="menu">
+		<ul>
+			<li><a href="#" onclick="return switchPage('console');">Console</a></li>
+			<li><a href="#" onclick="return switchPage('control');">Control</a></li>
+		</ul>
+	</div>
+	
+	<div id="console" class="page">
+		<div id="data-wrapper">
+			<div id="data-content"></div>
+		</div>
+		<form onsubmit="return sendMessageToDevice(); return false;">
+			<input type="text" id="cmd" name="cmd" class="text" placeholder="Type a command..." style="width: 500px;" />
+			<input type="submit" value="Send" class="button" style="width: 150px;" />
+		</form>	
+	</div>
+	
+	<div id="control" class="page">
+		<p>Set speed: <input id="speed" value="10" class="text" style="width: 50px;" />%</p>
+		<p>Use the arrow keys or WASD to move around, space bar to stop.</p>
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+switchPage("console");
+</script>
+
+</body>
+</html>

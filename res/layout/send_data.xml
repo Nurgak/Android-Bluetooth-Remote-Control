@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:orientation="vertical" >
+
+    <com.bluetooth.activities.LogView
+        android:id="@+id/tvData"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:scrollbars="vertical" />
+
+    <EditText
+        android:id="@+id/etCommand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/commandHint"
+        android:imeOptions="actionSend"
+        android:inputType="textNoSuggestions" />
+
+</LinearLayout>

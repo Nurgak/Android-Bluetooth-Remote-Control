@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="app_name">Blueberry</string>
+    <string name="search">Search for devices</string>
+    <string name="searching">Searching&#8230;</string>
+    <string name="wheelSpeeds">Wheel speeds</string>
+    <string name="accelerometer">Accelerometer</string>
+    <string name="commandHint">Enter a command</string>
+    <string name="send">Send</string>
+    <string name="threshold">Threshold</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="circle">Circle</string>
+    <string name="pairedDevices">Paired devices</string>
+    <string name="availableDevices">Available devices</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="kp">Kp</string>
+    <string name="ki">Ki</string>
+    <string name="kd">Kd</string>
+    <string name="maxSpeed">Maximum speed</string>
+    <string name="leftStop">L: 0</string>
+    <string name="rightStop">R: 0</string>
+    <string name="touchPosition">Touch position</string>
+    <string name="speak">Speak</string>
+    <string name="data">Data</string>
+    <string name="clients">Clients</string>
+    <string name="ip">IP:</string>
+    <string name="serverStart">Start server</string>
+    <string name="serverStop">Stop server</string>
+
+    <style name="listItem">
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+    </style>
+
+    <style name="title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="subtitle">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#888888</item>
+    </style>
+
+    <style name="settingsRow">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+    </style>
+
+</resources>

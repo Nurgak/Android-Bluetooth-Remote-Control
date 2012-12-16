@@ -1,0 +1,8 @@
+.DS_Store
+/images/*
+/*.png
+/app/*
+/*.mov
+/gh-pages/*
+/screenshots/*
+/*.png

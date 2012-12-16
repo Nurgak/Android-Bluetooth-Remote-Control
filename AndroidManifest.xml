@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bluetooth"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="14" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature
+        android:name="android.hardware.accelerometer"
+        android:required="true" />
+
+    <application
+        android:name=".BluetoothRemoteControlApp"
+        android:icon="@drawable/ic_btrc"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".DeviceSelectActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ActionListActivity"
+            android:label="Activities"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.AccelerometerControl"
+            android:label="Accelerometer Control"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.TouchControl"
+            android:label="Touch Control"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.VoiceControl"
+            android:label="Voice Control"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.SendData"
+            android:label="Send Data"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.LineFollower"
+            android:label="Line Follower"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.SampleActivity"
+            android:label="Sample Activity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.KillAllHumans"
+            android:label="Kill All Humans"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.WiFiControl"
+            android:label="Server"
+            android:screenOrientation="portrait" >
+        </activity>
+    </application>
+
+</manifest>
