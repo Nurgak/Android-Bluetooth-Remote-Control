@@ -1,4 +1,4 @@
-![Blueberry](blueberry.png "Blueberry")
+![Blueberry](http://i.imgur.com/LBs2W.png "Blueberry")
 
 # Blueberry: Bluetooth Remote Control Application for Android
 
