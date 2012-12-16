@@ -67,7 +67,7 @@ Finally an interesting activity would be an [API](http://en.wikipedia.org/wiki/A
 
 The Bluetooth device receives instructions to be parsed and interpreted, still taking for the example a two-wheeled robot the instruction to go forwards is `s,50,50`, with `50,50` being the speed of the left and right wheels in percent from -100 to 100, 0 being the stopped position. Unfortunately this is only adapted to two-wheeled robots, but by editing the Android appication one can adapt it to behave differently such as send the turning angle and speed for a four-wheeled mobile platform.
 
-See the [code I used in my robot]() to understand how communication is handeled on the Bluetooth device end.
+See the [code I used in my robot](https://github.com/Nurgak/Arduino-Bluetooth) to understand how communication is handeled on the Bluetooth device end.
 
 #### 1.4.1. Instruction Set
 
@@ -81,7 +81,7 @@ Reset robot. Use it in critical cases when the robot has to be stopped no matter
 
 Of course the instuction set can be expanded by programming the Bluetooth device to interpret them and the Android application to send them. The _send data_ activity was specifically made with this purpose: you may seny any data to your device which you priorly programmed to interpret it.
 
-For example if you whish to read a light sensor connected to your Arduino you would make it send that information back, via serial, when it receives the `k` instruction (or any other character that isn't used for something else). It might help to view an [example code for Arduino]().
+For example if you whish to read a light sensor connected to your Arduino you would make it send that information back, via serial, when it receives the `k` instruction (or any other character that isn't used for something else). It might help to view an [example code for Arduino](https://github.com/Nurgak/Arduino-Bluetooth).
 
 ### 1.5. Connection state
 
