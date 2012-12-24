@@ -18,8 +18,8 @@ package com.bluetooth;
 import java.util.ArrayList;
 import java.util.Set;
 
-import com.bluetooth.DeviceListBaseAdapter;
 import com.bluetooth.Device;
+import com.bluetooth.DeviceListBaseAdapter;
 import com.bluetooth.R;
 
 import android.app.Activity;

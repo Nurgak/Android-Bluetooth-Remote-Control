@@ -17,6 +17,8 @@ package com.bluetooth;
 
 import java.util.ArrayList;
 
+import com.bluetooth.R;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -17,6 +17,8 @@ package com.bluetooth;
 
 import java.util.ArrayList;
 
+import com.bluetooth.R;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;

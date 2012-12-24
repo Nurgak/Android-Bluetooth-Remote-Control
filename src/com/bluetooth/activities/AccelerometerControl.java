@@ -17,6 +17,7 @@ package com.bluetooth.activities;
 
 import com.bluetooth.BluetoothActivity;
 import com.bluetooth.R;
+
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Sensor;

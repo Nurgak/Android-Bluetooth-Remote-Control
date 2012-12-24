@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.bluetooth.BluetoothActivity;
 import com.bluetooth.BluetoothRemoteControlApp;
 import com.bluetooth.R;
@@ -320,7 +321,7 @@ public class KillAllHumans extends BluetoothActivity implements SurfaceHolder.Ca
 				soundName = kill[randomInt.nextInt(kill.length)];
 				break;
 			}
-			
+
 			mediaPlayer = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(soundName, "raw", this.getPackageName()));
 			mediaPlayer.setOnCompletionListener(new OnCompletionListener()
 			{

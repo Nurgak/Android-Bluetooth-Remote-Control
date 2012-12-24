@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bluetooth"
-    android:versionCode="4"
+    android:versionCode="5"
     android:versionName="1.0" >
 
     <uses-sdk
@@ -22,11 +22,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
-        android:name="android.hardware.accelerometer"
+        android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
     <uses-feature
         android:name="android.hardware.screen.portrait"
-        android:required="false" />
+        android:required="true" />
 
     <application
         android:name=".BluetoothRemoteControlApp"

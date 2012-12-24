@@ -17,6 +17,7 @@ package com.bluetooth.activities;
 
 import com.bluetooth.BluetoothRemoteControlApp;
 import com.bluetooth.R;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Handler;

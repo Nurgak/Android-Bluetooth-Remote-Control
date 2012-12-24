@@ -16,6 +16,7 @@
 package com.bluetooth.activities;
 
 import java.io.IOException;
+
 import com.bluetooth.BluetoothActivity;
 import com.bluetooth.BluetoothRemoteControlApp;
 import com.bluetooth.R;

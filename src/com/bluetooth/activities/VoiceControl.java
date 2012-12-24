@@ -21,6 +21,7 @@ import java.util.List;
 import com.bluetooth.BluetoothActivity;
 import com.bluetooth.BluetoothRemoteControlApp;
 import com.bluetooth.R;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
