@@ -1,8 +1,10 @@
-![Blueberry](http://i.imgur.com/LBs2W.png "Blueberry")
+![Blueberry](https://raw.github.com/Nurgak/Android-Bluetooth-Remote-Control/master/images/blueberry.png "Blueberry")
 
 # Blueberry: Bluetooth Remote Control Application for Android
 
 Blueberry is an [Android application](https://play.google.com/store/apps/details?id=com.bluetooth) that uses the phone's Bluetooth feature to connect to a Bluetooth enabled device. It is mainly intended to control mobile platforms such as an Arduino with a Bluetooth shield mounted on a platform with two motorized wheels. Additionally it uses the phone's camera, internet connection and sensors to interact with the mobile platform.
+
+[![Video](https://raw.github.com/Nurgak/Android-Bluetooth-Remote-Control/master/images/video.png "Blueberry demonstration video")](http://youtu.be/ukssaDaPI5s)
 
 ## 1. Application
 
@@ -16,14 +18,14 @@ The device select activity searches for Bluetooth enabled devices and lets the u
 
 Different activities are available once the connection has been established. They are in a list with a title and a small description of what they do. When an activity is quit by user this screen is shown again.
 
-![Activity selection](http://i.imgur.com/krBx9.png "Activity selection")
+![Activity selection](https://raw.github.com/Nurgak/Android-Bluetooth-Remote-Control/master/images/screenshot_activities.png "Activity selection")
 
 ### 1.3. Activities
 
 These are the different ways to interact with the Bluetooth device. As stated before this application's main purpose is to interact with Bluetooth enabled mobile platforms (having two wheels) such as an Arduino with a Bluetooth shield so there are two speeds, one for each wheel.
 
-![Accelerometer Control](http://i.imgur.com/NL4sj.png "Accelerometer Control")
-![Send Data](http://i.imgur.com/N4DeC.png "Send Data")
+![Accelerometer Control](https://raw.github.com/Nurgak/Android-Bluetooth-Remote-Control/master/images/screenshot_accelerometer.png "Accelerometer Control")
+![Send Data](https://raw.github.com/Nurgak/Android-Bluetooth-Remote-Control/master/images/screenshot_senddata.png "Send Data")
 
 Currently there are 7 available activities:
 
