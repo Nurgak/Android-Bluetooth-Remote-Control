@@ -23,12 +23,26 @@
     <string name="leftStop">L: 0</string>
     <string name="rightStop">R: 0</string>
     <string name="touchPosition">Touch position</string>
+    <string name="LRMode">Sending touch position</string>
+    <string name="XYMode">Sending wheel speeds</string>
     <string name="speak">Speak</string>
     <string name="data">Data</string>
     <string name="clients">Clients</string>
     <string name="ip">IP:</string>
     <string name="serverStart">Start server</string>
     <string name="serverStop">Stop server</string>
+    <string name="timeDelay">Time delay (milliseconds)</string>
+    <string name="play">Play</string>
+    <string name="livePreview">Live preview</string>
+    <string name="stopPreview">Stop preview</string>
+    <string name="keyframes">Keyframes</string>
+    <string name="insert">Insert</string>
+    <string name="delete">Delete</string>
+    <string name="saveSuccess">Keyframes saved to "blueberry remote/keyframes"</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
+    <string name="storageFolder">BlueberryRemote</string>
+    <string name="savePromptText">File name (file will be overwritten is it exists)</string>
 
     <style name="listItem">
         <item name="android:paddingTop">5dp</item>

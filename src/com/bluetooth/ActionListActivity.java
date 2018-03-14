@@ -50,6 +50,7 @@ public class ActionListActivity extends BluetoothActivity
 		activityList.add(new Action("Touch Control", "Control robot's movements by touch", "TouchControl"));
 		//activityList.add(new Action("Arrow Control", "Simplistic control with arrows", "ArrowControl"));
 		activityList.add(new Action("Voice Control", "Control robot with oral instructions", "VoiceControl"));
+		activityList.add(new Action("Keyframes", "Create and replay a set of instructions", "Keyframes"));
 		//activityList.add(new Action("Program", "Save and replay a set of instructions", "Program"));
 		//activityList.add(new Action("Keypad", "Send numbers from 1 to 9 for custom actions", "Keypad"));
 		activityList.add(new Action("Wi-Fi Control", "Use a computer to remotely control from a browser", "WiFiControl"));

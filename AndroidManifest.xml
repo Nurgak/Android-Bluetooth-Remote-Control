@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
@@ -57,6 +58,11 @@
         <activity
             android:name=".activities.TouchControl"
             android:label="Touch Control"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.Keyframes"
+            android:label="Keyframes"
             android:screenOrientation="portrait" >
         </activity>
         <activity

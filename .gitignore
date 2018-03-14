@@ -5,3 +5,8 @@
 /gh-pages/*
 /screenshots/*
 /*.png
+/out/*
+/gen/*
+/.idea/*
+*.apk
+*.iml

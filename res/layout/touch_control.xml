@@ -83,6 +83,6 @@
             android:layout_width="0dp"
             android:layout_weight="0.6"
             android:onClick="xyButtonClick"
-            android:text="Sending wheel speeds" />
+            android:text="@string/LRMode" />
     </LinearLayout>
 </LinearLayout>

@@ -172,11 +172,11 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 		xyMode = !xyMode;
 		if(xyMode)
 		{
-			bXY.setText("Sending touch position");
+			bXY.setText("@string/XYMode");
 		}
 		else
 		{
-            bXY.setText("Sending wheel speeds");
+            bXY.setText("@string/LRMode");
 		}
 	}
 
