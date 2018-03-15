@@ -1,5 +1,7 @@
 package com.bluetooth.activities;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,11 +10,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -33,6 +40,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import static java.lang.Math.min;
@@ -45,15 +54,23 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
     private boolean preview = false;
     private ArrayList<SeekBar> seekBars;
     private ArrayList<TextView> textViews;
+    private ProgressBar pbar;
     private ArrayList<int[]> frames;
     private int numChannels;
     int currentFrame;
+    int nextFrame;
+    private final int animLimit = 1000;
     private String fileName;
 
     private String[] mFileList;
     private String mChosenFile;
     private static final String FTYPE = ".txt";
     private Context c;
+    ValueAnimator animation;
+    private int delayMillis = 50;
+    final private int minDelay = 50;
+    private Timer t = new Timer(); // for sending updates in preview mode
+    private TimerTask tt;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -62,6 +79,7 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         setContentView(R.layout.keyframes);
         c = getApplicationContext();
         // populate seekBars and textViews arrays
+        pbar = (ProgressBar) findViewById(R.id.progressBar);
         // channel 0 is time delay
         seekBars = new ArrayList<SeekBar>();
         seekBars.add((SeekBar) findViewById(R.id.sbTimeDelay));
@@ -81,11 +99,39 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         }
         frames = new ArrayList<int[]>();
         frames.add(new int[numChannels]);
+        frames.get(0)[0] = minDelay;
         createFrameList();
         selectKeyframe(0);
         bPlay = (Button) findViewById(R.id.bPlay);
         bPreview = (Button) findViewById(R.id.bPreview);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.keyframes_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.bSave:
+                saveKeyframes();
+                return true;
+            case R.id.bLoad:
+                loadFileList();
+                createLoadDialog();
+                return true;
+            case R.id.bInfo:
+                createInfoDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void saveKeyframes() {
         // prompt for file name
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -171,9 +217,8 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
     protected Dialog createLoadDialog() {
         Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose your file");
+        builder.setTitle(getString(R.string.pickFile));
         if(mFileList == null) {
-            //Log.e(TAG, "Showing file picker before loading the file list");
             dialog = builder.create();
             return dialog;
         }
@@ -183,6 +228,15 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
                 loadKeyframes(mChosenFile);
             }
         });
+        dialog = builder.show();
+        return dialog;
+    }
+
+    protected Dialog createInfoDialog() {
+        Dialog dialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.info));
+        builder.setMessage(R.string.keyframesInfo);
         dialog = builder.show();
         return dialog;
     }
@@ -201,6 +255,16 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
                 sb.append('\n');
         }
         return sb.toString();
+    }
+    private boolean writeKeyframe(int[] frame) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("k,");
+        for (int j = 0; j < numChannels; j++) {
+            sb.append(frame[j]);
+            if (j < numChannels-1)
+                sb.append(',');
+        }
+        return write(sb.toString());
     }
     public void loadKeyframes(String fName) {
         Log.d("keyframes", "Opening keyframes at " + fName);
@@ -238,7 +302,8 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
             Toast.makeText(c, e.toString(), Toast.LENGTH_SHORT).show();
             return;
         }
-        fileName = fName;
+        // delete .txt extension
+        fileName = fName.substring(0, fName.length() - 4);;
     }
     private int[] parseKeyframe(String frameStr) {
         // check if string is parsable
@@ -270,32 +335,112 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         selectKeyframe(currentFrame);
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton btn, boolean checked) {
-        if (checked) {
-            selectKeyframe(Integer.parseInt(btn.getText().toString()) - 1);
-        }
-    }
-
     private void selectKeyframe(int frameIndex) {
         currentFrame = frameIndex;
-        int[] frame = frames.get(frameIndex);
-        for (int i=0; i < min(numChannels, frame.length); i++) {
-            seekBars.get(i).setProgress(frame[i]);
-            textViews.get(i).setText(Integer.toString(frame[i]));
-        }
+        setSliderValues(frames.get(frameIndex));
+
+        // update radio buttons
         RadioGroup frameList = (RadioGroup) findViewById(R.id.frameList);
         frameList.clearCheck();
         RadioButton btn = (RadioButton) frameList.getChildAt(frameIndex);
         btn.setChecked(true);
     }
+    private void setSliderValues(int[] frame) {
+        seekBars.get(0).setProgress(frame[0] - minDelay);
+        textViews.get(0).setText(Integer.toString(frame[0]));
+        for (int i=1; i < min(numChannels, frame.length); i++) {
+            seekBars.get(i).setProgress(frame[i]);
+            textViews.get(i).setText(Integer.toString(frame[i]));
+        }
+    }
+
+    private void setupAnimation() {
+        animation = ValueAnimator.ofInt(0, animLimit);
+        animation.setFrameDelay(delayMillis);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.setRepeatCount(animation.INFINITE);
+        animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator anim) {
+                int val = (int)anim.getAnimatedValue();
+                int[] currentFrameArr = frames.get(currentFrame);
+                int[] nextFrameArr = frames.get(nextFrame);
+                int[] midFrame = new int[numChannels];
+                // time
+                midFrame[0] = currentFrameArr[0] * val / animLimit;
+                // regular channels
+                for (int i = 1; i < numChannels; i++) {
+                    midFrame[i] = currentFrameArr[i] * (animLimit - val) / animLimit + nextFrameArr[i] * val / animLimit;
+                }
+                writeKeyframe(midFrame);
+                midFrame[0] = currentFrameArr[0];
+                setSliderValues(midFrame);
+                pbar.setProgress(val * 100 / animLimit);
+            }
+        });
+        animation.addListener(new ValueAnimator.AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator anim) {
+            }
+            @Override
+            public void onAnimationCancel(Animator anim) {
+            }
+            @Override
+            public void onAnimationRepeat(Animator anim) {
+                currentFrame = nextFrame;
+                selectKeyframe(currentFrame);
+                updateAnimation();
+            }
+            @Override
+            public void onAnimationStart(Animator anim) {
+                updateAnimation();
+            }
+        });
+    }
+    private void updateAnimation() {
+        // if next index > last index, restart
+        nextFrame = (currentFrame + 1 > frames.size() - 1) ? 0 : currentFrame + 1;
+        animation.setCurrentPlayTime(0);
+        animation.setDuration(frames.get(currentFrame)[0]);
+    }
+    public void playBtnClick(View v)
+    {
+        if(((ToggleButton) v).isChecked())
+        {
+            play = true;
+            handleTimer(false);
+            if (animation == null) {
+                setupAnimation();
+            }
+            animation.start();
+        }
+        else
+        {
+            play = false;
+            handleTimer(false);
+            animation.end();
+        }
+        Button btn = (Button) findViewById(R.id.bPreview);
+        btn.setEnabled(!play);
+        btn = (Button) findViewById(R.id.insertBtn);
+        btn.setEnabled(!play);
+        btn = (Button) findViewById(R.id.deleteBtn);
+        btn.setEnabled(!play);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton btn, boolean checked) {
+        if (checked && !play) {
+            selectKeyframe(Integer.parseInt(btn.getText().toString()) - 1);
+        }
+    }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
     {
+        if (play || !fromUser) return;
         int channel;
-        switch(seekBar.getId())
-        {
+        switch(seekBar.getId()) {
             case R.id.sbTimeDelay:
                 channel = 0;
                 break;
@@ -311,36 +456,62 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
             case R.id.sb4:
                 channel = 4;
                 break;
+            case R.id.sb5:
+                channel = 5;
+                break;
+            case R.id.sb6:
+                channel = 6;
+                break;
             default:
                 return;
         }
         textViews.get(channel).setText(Integer.toString(progress));
-        frames.get(currentFrame)[channel] = progress;
+        frames.get(currentFrame)[channel] = progress + (channel==0 ? minDelay : 0);
     }
-
+    private void handleTimer(boolean okToStart) {
+        if (tt != null && (play || !preview || !okToStart)) {
+            tt.cancel();
+            t.purge();
+        } else if (preview && !play && okToStart) {
+            tt = new TimerTask() {
+                @Override
+                public void run() {
+                    int[] tmpFrame = new int[numChannels];
+                    System.arraycopy(frames.get(currentFrame), 0, tmpFrame, 0, frames.get(currentFrame).length);
+                    tmpFrame[0] = delayMillis;
+                    writeKeyframe(tmpFrame);
+                }
+            };
+            t.schedule(tt, 0, delayMillis); //turn on timer to send command every 0.05 seconds
+        }
+    }
     @Override
     public void onStartTrackingTouch(SeekBar seekBar)
     {
-
+        handleTimer(true);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar)
     {
-
+        handleTimer(false);
     }
+
     public void insertBtnClick(View v) {
+        int[] frame = new int[numChannels];
+        frame[0] = minDelay;
         // ArrayList.add(int, arr) inserts to the left but add button should add to the right
         // so just add(arr) if adding next to last frame
         if (currentFrame == frames.size() - 1) {
-            frames.add(new int[numChannels]);
+            frames.add(frame);
         }
         else {
-            frames.add(currentFrame + 1, new int[numChannels]);
+            frames.add(currentFrame + 1, frame);
         }
         currentFrame += 1;
         createFrameList();
     }
+
     public void deleteBtnClick(View v) {
         if (frames.size() > 1) {
             frames.remove(currentFrame);
@@ -348,17 +519,7 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
             createFrameList();
         }
     }
-    public void playBtnClick(View v)
-    {
-        if(((ToggleButton) v).isChecked())
-        {
-            play = true;
-        }
-        else
-        {
-            play = false;
-        }
-    }
+
     public void previewBtnClick(View v)
     {
         if(((ToggleButton) v).isChecked())
@@ -369,14 +530,5 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         {
             preview = false;
         }
-    }
-    public void saveBtnClick(View v)
-    {
-        saveKeyframes();
-    }
-    public void loadBtnClick(View v)
-    {
-        loadFileList();
-        createLoadDialog();
     }
 }

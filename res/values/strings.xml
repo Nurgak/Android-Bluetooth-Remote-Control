@@ -38,11 +38,19 @@
     <string name="keyframes">Keyframes</string>
     <string name="insert">Insert</string>
     <string name="delete">Delete</string>
+    <string name="pickFile">Pick a keyframe file</string>
+    <string name="info">Info</string>
     <string name="saveSuccess">Keyframes saved to "blueberry remote/keyframes"</string>
     <string name="save">Save</string>
     <string name="load">Load</string>
     <string name="storageFolder">BlueberryRemote</string>
     <string name="savePromptText">File name (file will be overwritten is it exists)</string>
+    <string name="keyframesInfo">
+        Allows creation of keyframe animations. Sends commands in the format of \"k,time,ch1,ch2,ch\3" and so on, where time and ch values are integers as displayed next to the sliders. Time is milliseconds before next command should be expected.\n\n
+        Enabling "Play" plays the keyframes in a loop.\n\n
+        "Live preview" sends the current keyframe as changes are made. time is set to 0.\n\n
+        Commands are sent at 20hz, keyframes are linearly interpolated.\n\n
+    </string>
 
     <style name="listItem">
         <item name="android:paddingTop">5dp</item>
