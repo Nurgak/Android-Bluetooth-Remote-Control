@@ -5,7 +5,6 @@
     android:orientation="vertical">
 
     <LinearLayout
-        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -15,9 +14,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="9"
+            android:padding="5dp"
             android:gravity="center_vertical"
-            android:text="@string/keyframes"
-            android:textSize="16sp" />
+            android:text="@string/keyframes" />
 
         <Button
             android:id="@+id/insertBtn"
@@ -39,6 +38,12 @@
             android:onClick="deleteBtnClick"/>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#555555" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -62,11 +67,9 @@
     </HorizontalScrollView>
 
     <View
-        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#222222" />
-
+        android:background="#555555" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -260,17 +263,50 @@
         </LinearLayout>
     </ScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#555555" />
+
+    <LinearLayout
+        style="@style/settingsRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="@string/interpolate" />
+
+        <Spinner
+            android:id="@+id/interpolateSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:entries="@array/interpolateOpts" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#555555" />
+
     <TextView
-        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:padding="5dp"
         android:text="@string/timeDelay" />
 
     <LinearLayout
         style="@style/settingsRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="0dp"
         android:orientation="horizontal">
 
         <SeekBar

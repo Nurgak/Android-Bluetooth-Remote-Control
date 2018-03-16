@@ -116,6 +116,9 @@ public class DeviceSelectActivity extends Activity implements Handler.Callback
 	{
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
+			if (!checkBlueToothState()) {
+				return;
+			}
 			// Cancel discovery because it's costly and we're about to connect
 			bluetoothAdapter.cancelDiscovery();
 
@@ -188,7 +191,6 @@ public class DeviceSelectActivity extends Activity implements Handler.Callback
 		// Prevent phones without Bluetooth from using this application
 		if(!checkBlueToothState())
 		{
-			finish();
 			return;
 		}
 

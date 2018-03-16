@@ -43,13 +43,21 @@
     <string name="saveSuccess">Keyframes saved to "blueberry remote/keyframes"</string>
     <string name="save">Save</string>
     <string name="load">Load</string>
+    <string name="interpolate">Interpolate</string>
+    <string-array name="interpolateOpts">
+        <item>Linear</item>
+        <item>Accelerate</item>
+        <item>Decelerate</item>
+        <item>Accelerate, Decelerate</item>
+    </string-array>
     <string name="storageFolder">BlueberryRemote</string>
     <string name="savePromptText">File name (file will be overwritten is it exists)</string>
     <string name="keyframesInfo">
-        Allows creation of keyframe animations. Sends commands in the format of \"k,time,ch1,ch2,ch\3" and so on, where time and ch values are integers as displayed next to the sliders. Time is milliseconds before next command should be expected.\n\n
+        Allows creation of keyframe animations. Sends commands in the format of \"k,time,ch1,ch2,ch3\" and so on, where time and ch values are integers as displayed next to the sliders. Time is milliseconds before next command should be expected.\n\n
+        Interpolation method determines how it will transition to the next keyframe. Accelerate starts slowly and accelerates, decelerate starts at speed and slows down, linear stays at a constant speed.\n\n
         Enabling "Play" plays the keyframes in a loop.\n\n
         "Live preview" sends the current keyframe as changes are made. time is set to 0.\n\n
-        Commands are sent at 20hz, keyframes are linearly interpolated.\n\n
+        Commands are sent at 20hz. If the app stutters or the Arduino receives mangled messages, it is probably because the bluetooth module can\'t keep up. Configure it to have a higher baud rate.
     </string>
 
     <style name="listItem">
