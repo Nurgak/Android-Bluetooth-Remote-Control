@@ -18,6 +18,7 @@ package com.bluetooth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.UUID;
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;
@@ -175,60 +176,87 @@ public class BluetoothRemoteControlApp extends Application
 	 */
 	private class BluetoothThread extends Thread
 	{
-		private final BluetoothSocket socket;
+		private BluetoothSocket socket;
 		private InputStream inStream;
 		private OutputStream outStream;
 
 		public BluetoothThread(BluetoothDevice device)
 		{
-			BluetoothSocket tmp = null;
 			try
 			{
 				// General purpose UUID
-				tmp = device.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+				socket = device.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+				if(D)
+					Log.i(TAG, "Creating to socket");
 			}
-			catch(IOException e)
-			{
+			catch(IOException e) {
+				if (D)
+					Log.e(TAG, "Could not create socket.");
 				e.printStackTrace();
+				disconnect();
 			}
-			socket = tmp;
 		}
-
 		public void run()
 		{
-			// Connect to the socket
 			try
 			{
-				// Blocking function, needs the timeout
 				if(D)
 					Log.i(TAG, "Connecting to socket");
-				socket.connect();
+				socket.connect(); // Blocking function, needs the timeout
 			}
-			catch(IOException e)
-			{
-				// If the user didn't cancel the connection then it has failed (timeout)
-				if(!stoppingConnection)
+			catch(IOException e) {
+				if (D)
+					Log.e(TAG, "Could not connect to socket. Retrying.");
+				e.printStackTrace();
+				try
+				{
+					// workaround for bluetooth 4.0 https://stackoverflow.com/questions/18657427
+					Class<?> clazz = socket.getRemoteDevice().getClass();
+					Class<?>[] paramTypes = new Class<?>[] {Integer.TYPE};
+
+					Method m = clazz.getMethod("createRfcommSocket", paramTypes);
+					Object[] params = new Object[] {Integer.valueOf(1)};
+
+					socket = (BluetoothSocket) m.invoke(socket.getRemoteDevice(), params);
+					socket.connect();
+				}
+				catch(IOException e1)
 				{
 					if(D)
-						Log.e(TAG, "Cound not connect to socket");
-					e.printStackTrace();
-					try
-					{
-						socket.close();
-					}
-					catch(IOException e1)
-					{
-						if(D)
-							Log.e(TAG, "Cound not close the socket");
-						e1.printStackTrace();
-					}
+						Log.e(TAG, "Could not create fallback socket");
+					e1.printStackTrace();
 					disconnect();
+					return;
 				}
-				return;
+				catch(java.lang.NoSuchMethodException e1)
+				{
+					if(D)
+						Log.e(TAG, "Backup socket reflection failed. Could not create socket.");
+					e1.printStackTrace();
+					disconnect();
+					return;
+				}
+				catch(java.lang.IllegalAccessException e1)
+				{
+					if(D)
+						Log.e(TAG, "Backup socket reflection failed. Could not create socket");
+					e1.printStackTrace();
+					disconnect();
+					return;
+				}
+				catch(java.lang.reflect.InvocationTargetException e1)
+				{
+					if(D)
+						Log.e(TAG, "Backup socket reflection failed. Could not create socket");
+					e1.printStackTrace();
+					disconnect();
+					return;
+				}
 			}
 
 			// Connected
 			setState(STATE_CONNECTED);
+			updateLastComm();
 			// Send message to activity to inform of success
 			sendMessage(MSG_CONNECTED, null);
 
@@ -351,6 +379,8 @@ public class BluetoothRemoteControlApp extends Application
 			}
 			catch(IOException e)
 			{
+				if(D)
+					Log.e(TAG, "Couldn't cancel bluetoothThread");
 				e.printStackTrace();
 			}
 		}
@@ -383,8 +413,8 @@ public class BluetoothRemoteControlApp extends Application
 						write(null);
 					}
 
-					// Communication timed out
-					if(System.currentTimeMillis() - lastComm > timeout)
+					// Communication timed out. Extra big when connecting.
+					if(System.currentTimeMillis() - lastComm > (state == STATE_CONNECTED ? timeout : timeout*4))
 					{
 						if(D)
 							Log.e(TAG, "Timeout");

@@ -172,11 +172,11 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 		xyMode = !xyMode;
 		if(xyMode)
 		{
-			bXY.setText("@string/XYMode");
+			bXY.setText(getString(R.string.XYMode));
 		}
 		else
 		{
-            bXY.setText("@string/LRMode");
+            bXY.setText(getString(R.string.LRMode));
 		}
 	}
 
