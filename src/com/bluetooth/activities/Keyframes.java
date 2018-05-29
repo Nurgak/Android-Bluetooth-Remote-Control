@@ -63,14 +63,16 @@ import static java.lang.Math.min;
  */
 public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarChangeListener, RadioButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
     private final int animLimit = 1000; // used for interpolating
-    private final int minDelay = 50; // min keyframe length
+    private final int minDelay = 100; // min keyframe length
     private int defaultDelay = 500; // default keyframe length
-    private int delayMillis = 50; // time between commands
+    private int delayMillis = 100; // time between commands
     private int numChannels;
     private int currentFrame; // index to frames
     private int nextFrame;
     private boolean play = false;
     private boolean preview = false;
+    private boolean interpolate = false;
+    private boolean timerRunning = false;
     private ProgressBar pbar;
     private Spinner interpolateSpinner;
     private ArrayList<SeekBar> seekBars;
@@ -87,6 +89,7 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
     private ValueAnimator animation;
     private ToggleButton bPlay;
     private ToggleButton bPreview;
+    private ToggleButton bInterpolate;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -126,6 +129,7 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
 
         bPlay = (ToggleButton) findViewById(R.id.bPlay);
         bPreview = (ToggleButton) findViewById(R.id.bPreview);
+        bInterpolate = (ToggleButton) findViewById(R.id.bInterpolate);
     }
 
     // set up menu
@@ -166,6 +170,12 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         if (animation != null) animation.end();
         handleTimer(false);
         super.onPause();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
     }
 
     /**
@@ -447,10 +457,13 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
                 }
                 // sometimes the animation gets messed up after a repeat, skip writing frame if that happens
                 if (animation.getCurrentPlayTime() < delayMillis/2 && val > animLimit/2) return;
-                writeKeyframe(tmpFrameArr);
+                if (interpolate) {
+                    writeKeyframe(tmpFrameArr);
+                }
                 tmpFrameArr[0] = currentFrameArr[0];
                 setSliderValues(tmpFrameArr);
                 pbar.setProgress(val * 100 / animLimit);
+
             }
         });
         animation.addListener(new ValueAnimator.AnimatorListener() {
@@ -469,12 +482,16 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
                 currentFrame = nextFrame;
                 selectKeyframe(currentFrame);
                 updateAnimation();
+                if (!interpolate)
+                    writeKeyframe(frames.get(nextFrame));
             }
             @Override
             public void onAnimationStart(Animator anim) {
                 play = true;
                 handleTimer(false);
                 updateAnimation();
+                if (!interpolate)
+                    writeKeyframe(frames.get(nextFrame));
             }
         });
     }
@@ -515,7 +532,8 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         if (tt != null && (play || !preview || !okToStart)) {
             tt.cancel();
             t.purge();
-        } else if (preview && !play && okToStart) {
+            timerRunning = false;
+        } else if (preview && !play && okToStart && !timerRunning) {
             tt = new TimerTask() {
                 @Override
                 public void run() {
@@ -525,7 +543,8 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
                     writeKeyframe(tmpFrame);
                 }
             };
-            t.schedule(tt, 0, delayMillis); //turn on timer to send command every 0.05 seconds
+            t.schedule(tt, 0, delayMillis); //turn on timer to send command every delayMillis milliseconds
+            timerRunning = true;
         }
     }
 
@@ -636,6 +655,8 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
         interpolateSpinner.setEnabled(!play);
     }
 
+    public void interpolateBtnClick(View v) { interpolate = ((ToggleButton) v).isChecked(); }
+
     public void insertBtnClick(View v) {
         int[] frame = new int[numChannels];
         frame[0] = defaultDelay;
@@ -666,5 +687,6 @@ public class Keyframes extends BluetoothActivity implements SeekBar.OnSeekBarCha
     public void previewBtnClick(View v)
     {
         preview = ((ToggleButton) v).isChecked();
+        handleTimer(true);
     }
 }

@@ -47,7 +47,7 @@ public class BluetoothRemoteControlApp extends Application
 {
 	private final static String TAG = "Blueberry";
 	// Debug flag
-	public final static boolean D = false;
+	public final static boolean D = true;
 
 	// Time between sending the idle filler to confirm communication, must be smaller than the timeout constant.
 	private final int minCommInterval = 900;
