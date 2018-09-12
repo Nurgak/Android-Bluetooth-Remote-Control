@@ -2,6 +2,8 @@
 
 # Blueberry: Bluetooth Remote Control Application for Android
 
+## APK download available under [releases](https://github.com/CalebJ2/Android-Bluetooth-Remote-Control/releases)
+
 Blueberry is an [Android application](https://play.google.com/store/apps/details?id=com.bluetooth) that uses the phone's Bluetooth feature to connect to a Bluetooth enabled device. It is mainly intended to control mobile platforms such as an Arduino with a Bluetooth shield mounted on a platform with two motorized wheels. Additionally it uses the phone's camera, internet connection and sensors to interact with the mobile platform.
 
 [![Video](https://raw.github.com/Nurgak/Android-Bluetooth-Remote-Control/master/images/video.png "Blueberry demonstration video")](http://youtu.be/ukssaDaPI5s)
