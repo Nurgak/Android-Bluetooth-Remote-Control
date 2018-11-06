@@ -32,16 +32,23 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class TouchControl extends BluetoothActivity implements OnTouchListener, SurfaceHolder.Callback
 {
 	private TextView tvTouchX, tvTouchY, tvWheelLeft, tvWheelRight;
 	private Button bToggle;
+    private Button bXY;
 	private SurfaceView svTouchArea;
 	private SurfaceHolder svTouchAreaHolder;
 	private Canvas canvas;
 	private Bitmap joystick;
 	private int touchX, touchY, wheelLeft, wheelRight;
-	private boolean running;
+	private boolean running = false;
+	private boolean xyMode = false;
+	private Timer t = new Timer(); //for sending commands with consistent timing
+	private TimerTask tt;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -69,6 +76,7 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 		joystick = BitmapFactory.decodeResource(getResources(), R.drawable.joystick);
 
 		bToggle = (Button) findViewById(R.id.bToggle);
+        bXY = (Button) findViewById(R.id.coordMode);
 	}
 
 	@Override
@@ -91,8 +99,25 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 			wheelRight = 0;
 			drawJoystick(v.getWidth() / 2, v.getHeight() / 2);
 			write("s,0,0");
+			if(running) {
+				tt.cancel();
+				t.purge();//maybe not required
+			}
 			break;
 		case MotionEvent.ACTION_DOWN:
+			if(running) {
+				tt = new TimerTask() {
+					@Override
+					public void run() {
+					if (xyMode) {
+						write("s," + touchX + "," + touchY); // output x y coordinates
+					} else {
+						write("s," + wheelLeft + "," + wheelRight); // output left right wheel speeds like for tank
+					}
+				}
+				};
+				t.schedule(tt, 0, 50); //turn on timer to send command every 0.05 seconds
+			}
 		case MotionEvent.ACTION_MOVE:
 			touchX = (int) (100 * (2 * (float) event.getX() / v.getWidth() - 1));
 			touchY = (int) (100 * (1 - 2 * (float) event.getY() / v.getHeight()));
@@ -119,11 +144,6 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 			{
 				wheelRight = -100;
 			}
-
-			if(running)
-			{
-				write("s," + wheelLeft + "," + wheelRight);
-			}
 			break;
 		}
 		tvTouchX.setText("X: " + touchX);
@@ -134,7 +154,7 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 		return true;
 	}
 
-	public void buttonClick(View v)
+	public void startButtonClick(View v)
 	{
 		running = !running;
 		if(running)
@@ -144,6 +164,19 @@ public class TouchControl extends BluetoothActivity implements OnTouchListener, 
 		else
 		{
 			bToggle.setText(R.string.start);
+			write("s,0,0");
+		}
+	}
+	public void xyButtonClick(View v)
+	{
+		xyMode = !xyMode;
+		if(xyMode)
+		{
+			bXY.setText(getString(R.string.XYMode));
+		}
+		else
+		{
+            bXY.setText(getString(R.string.LRMode));
 		}
 	}
 

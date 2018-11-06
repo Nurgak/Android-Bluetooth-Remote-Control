@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/bSave"
+        android:title="@string/save"
+        android:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/bLoad"
+        android:title="@string/load"
+        android:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/bInfo"
+        android:title="@string/info"
+        android:showAsAction="ifRoom|withText" />
+</menu>

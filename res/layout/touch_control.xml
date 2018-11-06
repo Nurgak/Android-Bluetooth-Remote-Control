@@ -64,12 +64,25 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <Button
-        android:id="@+id/bToggle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="buttonClick"
-        android:text="@string/start" />
+        android:orientation="horizontal" >
 
+        <Button
+            android:id="@+id/bToggle"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:onClick="startButtonClick"
+            android:text="@string/start" />
+
+        <Button
+            android:id="@+id/coordMode"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
+            android:onClick="xyButtonClick"
+            android:text="@string/LRMode" />
+    </LinearLayout>
 </LinearLayout>
